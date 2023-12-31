@@ -1,7 +1,7 @@
 use std::fmt;
 use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vec3 {
     e: [f64; 3],
 }
@@ -27,12 +27,12 @@ impl Vec3 {
         self.length_squared().sqrt()
     }
 
-    fn length_squared(&self) -> f64 {
+    pub fn length_squared(&self) -> f64 {
         self.x() * self.x() + self.y() * self.y() + self.z() * self.z()
     }
 
-    fn dot(&self, rhs: Vec3) -> f64 {
-        self.x() * rhs.x() + self.y() + rhs.y() + self.z() + rhs.z()
+    pub fn dot(&self, rhs: Vec3) -> f64 {
+        self.x() * rhs.x() + self.y() * rhs.y() + self.z() * rhs.z()
     }
 
     fn cross(&self, rhs: Vec3) -> Vec3 {
@@ -43,7 +43,7 @@ impl Vec3 {
         )
     }
 
-    fn unit_vector(&self) -> Vec3 {
+    pub fn unit_vector(&self) -> Vec3 {
         *self / self.length()
     }
 }
@@ -114,7 +114,7 @@ impl Mul<Vec3> for f64 {
     type Output = Vec3;
 
     fn mul(self, rhs: Vec3) -> Vec3 {
-        Vec3::new(self * rhs.e[0], self * rhs.e[1], self * rhs.e[2])
+        Vec3::new(self * rhs.x(), self * rhs.y(), self * rhs.z())
     }
 }
 
@@ -142,10 +142,81 @@ impl Sub for Vec3 {
     }
 }
 
-type Point3 = Vec3;
+pub type Point3 = Vec3;
 
 impl fmt::Display for Vec3 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{} {} {}", self.x(), self.y(), self.z())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_add() {
+        assert!(Vec3::new(1.0, 2.0, 3.0) + Vec3::new(1.0, 2.0, 3.0) == Vec3::new(2.0, 4.0, 6.0))
+    }
+
+    #[test]
+    fn test_add_assign() {
+        let mut v = Vec3::new(1.0, 2.0, 3.0);
+        let v1 = Vec3::new(1.0, 2.0, 3.0);
+        v += v1;
+        assert!(v == Vec3::new(2.0, 4.0, 6.0))
+    }
+
+    #[test]
+    fn test_length_squared() {
+        assert!(Vec3::new(1.0, 2.0, 3.0).length_squared() == 14.0)
+    }
+
+    #[test]
+    fn test_length() {
+        assert!(Vec3::new(5.0, 5.0, 5.0).length() == 8.660254037844387)
+    }
+
+    #[test]
+    fn test_dot() {
+        assert!(Vec3::new(1.0, 2.0, 3.0).dot(Vec3::new(2.0, 3.0, 4.0)) == 20.0)
+    }
+
+    #[test]
+    fn test_div() {
+        assert!(Vec3::new(2.0, 4.0, 6.0) / 2.0 == Vec3::new(1.0, 2.0, 3.0))
+    }
+
+    #[test]
+    fn test_div_assign() {
+        let mut v = Vec3::new(2.0, 4.0, 6.0);
+        let v1 = Vec3::new(2.0, 2.0, 2.0);
+        v /= v1;
+        assert!(v == Vec3::new(1.0, 2.0, 3.0))
+    }
+
+    #[test]
+    fn test_mul() {
+        assert!(Vec3::new(2.0, 4.0, 6.0) * 2.0 == Vec3::new(4.0, 8.0, 12.0))
+    }
+
+    #[test]
+    fn test_mul_swap() {
+        assert!(2.0 * Vec3::new(2.0, 4.0, 6.0) == Vec3::new(4.0, 8.0, 12.0))
+    }
+
+    #[test]
+    fn test_mul_vec() {
+        assert!(Vec3::new(2.0, 4.0, 6.0) * Vec3::new(2.0, 2.0, 2.0) == Vec3::new(4.0, 8.0, 12.0))
+    }
+
+    #[test]
+    fn test_sub() {
+        assert!(Vec3::new(2.0, 4.0, 6.0) - Vec3::new(2.0, 2.0, 2.0) == Vec3::new(0.0, 2.0, 4.0))
+    }
+
+    #[test]
+    fn test_neg() {
+        assert!(-Vec3::new(2.0, 4.0, 6.0) == Vec3::new(-2.0, -4.0, -6.0))
     }
 }
