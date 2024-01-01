@@ -1,6 +1,9 @@
 use std::io::{stderr, Write};
 mod colour;
+mod hittable;
+mod hittable_list;
 mod ray;
+mod sphere;
 mod vec3;
 
 const IMAGE_WIDTH: i64 = 400;
