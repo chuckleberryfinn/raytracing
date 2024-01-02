@@ -49,11 +49,11 @@ impl Vec3 {
         *self / self.length()
     }
 
-    pub fn random(&self) -> Vec3 {
+    pub fn random() -> Vec3 {
         Vec3::new(random_float(), random_float(), random_float())
     }
 
-    pub fn random_range(&self, min: f64, max: f64) -> Vec3 {
+    pub fn random_range(min: f64, max: f64) -> Vec3 {
         Vec3::new(
             random_float_range(min, max),
             random_float_range(min, max),
@@ -61,21 +61,21 @@ impl Vec3 {
         )
     }
 
-    pub fn random_in_unit_sphere(&self) -> Vec3 {
+    pub fn random_in_unit_sphere() -> Vec3 {
         loop {
-            let p = self.random_range(-1.0, 1.0);
+            let p = Vec3::random_range(-1.0, 1.0);
             if p.length_squared() < 1.0 {
                 return p;
             }
         }
     }
 
-    pub fn random_unit_vector(&self) -> Vec3 {
-        self.random_in_unit_sphere().unit_vector()
+    pub fn random_unit_vector() -> Vec3 {
+        Vec3::random_in_unit_sphere().unit_vector()
     }
 
-    pub fn random_on_hemisphere(&self, normal: Vec3) -> Vec3 {
-        let on_unit_sphere = self.random_unit_vector();
+    pub fn random_on_hemisphere(normal: Vec3) -> Vec3 {
+        let on_unit_sphere = Vec3::random_unit_vector();
         match on_unit_sphere.dot(normal) > 0.0 {
             true => on_unit_sphere,
             false => -on_unit_sphere,
