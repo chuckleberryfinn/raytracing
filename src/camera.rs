@@ -61,7 +61,8 @@ impl Camera {
             interval::Interval::new(0.0, rtweekend::INFINITY),
             &mut rec,
         ) {
-            return 0.5 * (rec.normal + colour::Colour::new(1.0, 1.0, 1.0));
+            let direction = Vec3::default().random_on_hemisphere(rec.normal);
+            return 0.5 * self.ray_colour(&ray::Ray::new(rec.p, direction), world);
         }
 
         let unit_direction = r.direction().unit_vector();

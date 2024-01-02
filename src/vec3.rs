@@ -1,6 +1,8 @@
 use std::fmt;
 use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub};
 
+use crate::rtweekend::{random_float, random_float_range};
+
 #[derive(Debug, Default, Copy, Clone, PartialEq)]
 pub struct Vec3 {
     e: [f64; 3],
@@ -45,6 +47,39 @@ impl Vec3 {
 
     pub fn unit_vector(&self) -> Vec3 {
         *self / self.length()
+    }
+
+    pub fn random(&self) -> Vec3 {
+        Vec3::new(random_float(), random_float(), random_float())
+    }
+
+    pub fn random_range(&self, min: f64, max: f64) -> Vec3 {
+        Vec3::new(
+            random_float_range(min, max),
+            random_float_range(min, max),
+            random_float_range(min, max),
+        )
+    }
+
+    pub fn random_in_unit_sphere(&self) -> Vec3 {
+        loop {
+            let p = self.random_range(-1.0, 1.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
+    pub fn random_unit_vector(&self) -> Vec3 {
+        self.random_in_unit_sphere().unit_vector()
+    }
+
+    pub fn random_on_hemisphere(&self, normal: Vec3) -> Vec3 {
+        let on_unit_sphere = self.random_unit_vector();
+        match on_unit_sphere.dot(normal) > 0.0 {
+            true => on_unit_sphere,
+            false => -on_unit_sphere,
+        }
     }
 }
 
