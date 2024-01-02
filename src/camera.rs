@@ -13,6 +13,7 @@ pub struct Camera {
     pub image_width: i64,
     pub samples_per_pixel: i32,
     pub image_height: i64,
+    pub max_depth: i32,
     center: Point3,
     pixel00_loc: Point3,
     pixel_delta_u: Vec3,
@@ -20,11 +21,12 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(aspect_ratio: f64, image_width: i64, samples_per_pixel: i32) -> Self {
+    pub fn new(aspect_ratio: f64, image_width: i64, samples_per_pixel: i32, max_depth: i32) -> Self {
         Self {
             aspect_ratio,
             image_width,
             samples_per_pixel,
+            max_depth,
             image_height: Default::default(),
             center: Default::default(),
             pixel00_loc: Default::default(),
@@ -45,7 +47,7 @@ impl Camera {
                 let mut pixel_colour = colour::Colour::new(0.0, 0.0, 0.0);
                 for sample in 0..self.samples_per_pixel {
                     let r = self.get_ray(i, j);
-                    pixel_colour += self.ray_colour(&r, world);
+                    pixel_colour += self.ray_colour(&r, self.max_depth, world);
                 }
                 colour::write_colour(&pixel_colour, self.samples_per_pixel);
             }
@@ -54,7 +56,11 @@ impl Camera {
         stderr().flush().expect("Unable to flush stderr");
     }
 
-    fn ray_colour(&self, r: &ray::Ray, world: &impl hittable::Hittable) -> colour::Colour {
+    fn ray_colour(&self, r: &ray::Ray, depth: i32, world: &impl hittable::Hittable) -> colour::Colour {
+        if depth <= 0 {
+            return colour::Colour::new(0.0, 0.0, 0.0);
+        }
+
         let mut rec = hittable::HitRecord::default();
         if world.hit(
             r,
@@ -62,7 +68,7 @@ impl Camera {
             &mut rec,
         ) {
             let direction = Vec3::random_on_hemisphere(rec.normal);
-            return 0.5 * self.ray_colour(&ray::Ray::new(rec.p, direction), world);
+            return 0.5 * self.ray_colour(&ray::Ray::new(rec.p, direction), depth-1, world);
         }
 
         let unit_direction = r.direction().unit_vector();

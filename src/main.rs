@@ -18,6 +18,6 @@ fn main() {
         100.0,
     ));
 
-    let mut cam = camera::Camera::new(16.0 / 9.0, 400, 100);
+    let mut cam = camera::Camera::new(16.0 / 9.0, 400, 100, 10);
     cam.render(&world);
 }
