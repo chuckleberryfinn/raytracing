@@ -64,7 +64,7 @@ impl Camera {
         let mut rec = hittable::HitRecord::default();
         if world.hit(
             r,
-            interval::Interval::new(0.0, rtweekend::INFINITY),
+            interval::Interval::new(0.001, rtweekend::INFINITY),
             &mut rec,
         ) {
             let direction = Vec3::random_on_hemisphere(rec.normal);
