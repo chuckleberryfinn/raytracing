@@ -67,7 +67,7 @@ impl Camera {
             interval::Interval::new(0.001, rtweekend::INFINITY),
             &mut rec,
         ) {
-            let direction = Vec3::random_on_hemisphere(rec.normal);
+            let direction = rec.normal + Vec3::random_unit_vector();
             return 0.5 * self.ray_colour(&ray::Ray::new(rec.p, direction), depth-1, world);
         }
 
@@ -88,7 +88,7 @@ impl Camera {
 
         let focal_length = 1.0;
         let viewport_height = 2.0;
-        let viewport_width = viewport_height * (self.image_width / self.image_height) as f64;
+        let viewport_width = viewport_height * (self.image_width as f64 / self.image_height as f64);
 
         let viewport_u = Vec3::new(viewport_width, 0.0, 0.0);
         let viewport_v = Vec3::new(0.0, -viewport_height, 0.0);

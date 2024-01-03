@@ -214,7 +214,10 @@ mod tests {
 
     #[test]
     fn test_dot() {
-        assert!(Vec3::new(1.0, 2.0, 3.0).dot(Vec3::new(2.0, 3.0, 4.0)) == 20.0)
+        assert!(Vec3::new(1.0, 2.0, 3.0).dot(Vec3::new(2.0, 3.0, 4.0)) == 20.0);
+        assert!(Vec3::new(2.0, 3.0, 4.0).dot(Vec3::new(1.0, 2.0, 3.0)) == 20.0);
+        assert!(2.0 * Vec3::new(2.0, 3.0, 4.0).dot(Vec3::new(1.0, 2.0, 3.0)) == 40.0);
+        assert!(Vec3::new(2.0, 3.0, 4.0).dot(Vec3::new(1.0, 2.0, 3.0)) - 3.0*3.0 == 11.0);
     }
 
     #[test]
@@ -247,7 +250,8 @@ mod tests {
 
     #[test]
     fn test_sub() {
-        assert!(Vec3::new(2.0, 4.0, 6.0) - Vec3::new(2.0, 2.0, 2.0) == Vec3::new(0.0, 2.0, 4.0))
+        assert!(Vec3::new(2.0, 4.0, 6.0) - Vec3::new(2.0, 2.0, 2.0) == Vec3::new(0.0, 2.0, 4.0));
+        assert!(Vec3::new(2.0, 2.0, 2.0) - Vec3::new(2.0, 4.0, 6.0) == Vec3::new(0.0, -2.0, -4.0));
     }
 
     #[test]
