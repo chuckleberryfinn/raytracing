@@ -217,7 +217,7 @@ mod tests {
         assert!(Vec3::new(1.0, 2.0, 3.0).dot(Vec3::new(2.0, 3.0, 4.0)) == 20.0);
         assert!(Vec3::new(2.0, 3.0, 4.0).dot(Vec3::new(1.0, 2.0, 3.0)) == 20.0);
         assert!(2.0 * Vec3::new(2.0, 3.0, 4.0).dot(Vec3::new(1.0, 2.0, 3.0)) == 40.0);
-        assert!(Vec3::new(2.0, 3.0, 4.0).dot(Vec3::new(1.0, 2.0, 3.0)) - 3.0*3.0 == 11.0);
+        assert!(Vec3::new(2.0, 3.0, 4.0).dot(Vec3::new(1.0, 2.0, 3.0)) - 3.0 * 3.0 == 11.0);
     }
 
     #[test]
