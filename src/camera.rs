@@ -1,8 +1,10 @@
 use std::io::{stderr, Write};
+use std::rc::Rc;
 
 use crate::colour;
 use crate::hittable;
 use crate::interval;
+use crate::material;
 use crate::ray;
 use crate::rtweekend;
 use crate::vec3::{Point3, Vec3};
@@ -71,14 +73,26 @@ impl Camera {
             return colour::Colour::new(0.0, 0.0, 0.0);
         }
 
-        let mut rec = hittable::HitRecord::default();
+        let mut rec = hittable::HitRecord {
+            mat: Rc::new(material::Lambertian {
+                albedo: colour::Colour::default(),
+            }),
+            p: Point3::default(),
+            normal: Vec3::default(),
+            front_face: bool::default(),
+            t: f64::default(),
+        };
         if world.hit(
             r,
             interval::Interval::new(0.001, rtweekend::INFINITY),
             &mut rec,
         ) {
-            let direction = rec.normal + Vec3::random_unit_vector();
-            return 0.5 * self.ray_colour(&ray::Ray::new(rec.p, direction), depth - 1, world);
+            let mut scattered = ray::Ray::default();
+            let mut attenuation = colour::Colour::default();
+            if rec.mat.scatter(r, &rec, &mut attenuation, &mut scattered) {
+                return attenuation * self.ray_colour(&scattered, depth - 1, world);
+            }
+            return colour::Colour::new(0.0, 0.0, 0.0);
         }
 
         let unit_direction = r.direction().unit_vector();

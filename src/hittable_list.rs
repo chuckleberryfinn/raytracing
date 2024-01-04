@@ -1,6 +1,11 @@
+use std::rc::Rc;
+
+use crate::colour::Colour;
 use crate::hittable::{HitRecord, Hittable};
 use crate::interval::Interval;
+use crate::material::Lambertian;
 use crate::ray::Ray;
+use crate::vec3::{Point3, Vec3};
 
 pub struct HittableList<T: Hittable> {
     objects: Vec<T>,
@@ -28,7 +33,15 @@ impl<T: Hittable> Hittable for HittableList<T> {
         let mut closest_so_far: f64 = ray_t.max;
 
         for object in &self.objects {
-            let mut temp_rec = HitRecord::default();
+            let mut temp_rec = HitRecord {
+                mat: Rc::new(Lambertian {
+                    albedo: Colour::default(),
+                }),
+                p: Point3::default(),
+                normal: Vec3::default(),
+                front_face: bool::default(),
+                t: f64::default(),
+            };
             if object.hit(r, Interval::new(ray_t.min, closest_so_far), &mut temp_rec) {
                 hit_anything = true;
                 closest_so_far = temp_rec.t;
