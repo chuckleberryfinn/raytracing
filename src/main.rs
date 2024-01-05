@@ -15,13 +15,8 @@ fn main() {
     let material_ground = Rc::new(material::Lambertian {
         albedo: colour::Colour::new(0.8, 0.8, 0.0),
     });
-    let material_center = Rc::new(material::Lambertian {
-        albedo: colour::Colour::new(0.7, 0.3, 0.3),
-    });
-    let material_left = Rc::new(material::Metal::new(
-        colour::Colour::new(0.8, 0.8, 0.8),
-        0.3,
-    ));
+    let material_center = Rc::new(material::Dielectric { ir: 1.5 });
+    let material_left = Rc::new(material::Dielectric { ir: 1.5 });
     let material_right = Rc::new(material::Metal::new(
         colour::Colour::new(0.8, 0.6, 0.2),
         1.0,

@@ -54,7 +54,7 @@ impl Camera {
                 let mut pixel_colour = colour::Colour::new(0.0, 0.0, 0.0);
                 for _ in 0..self.samples_per_pixel {
                     let r = self.get_ray(i, j);
-                    pixel_colour += self.ray_colour(&r, self.max_depth, world);
+                    pixel_colour += Camera::ray_colour(&r, self.max_depth, world);
                 }
                 colour::write_colour(&pixel_colour, self.samples_per_pixel);
             }
@@ -63,12 +63,7 @@ impl Camera {
         stderr().flush().expect("Unable to flush stderr");
     }
 
-    fn ray_colour(
-        &self,
-        r: &ray::Ray,
-        depth: i32,
-        world: &impl hittable::Hittable,
-    ) -> colour::Colour {
+    fn ray_colour(r: &ray::Ray, depth: i32, world: &impl hittable::Hittable) -> colour::Colour {
         if depth <= 0 {
             return colour::Colour::new(0.0, 0.0, 0.0);
         }
@@ -90,7 +85,7 @@ impl Camera {
             let mut scattered = ray::Ray::default();
             let mut attenuation = colour::Colour::default();
             if rec.mat.scatter(r, &rec, &mut attenuation, &mut scattered) {
-                return attenuation * self.ray_colour(&scattered, depth - 1, world);
+                return attenuation * Camera::ray_colour(&scattered, depth - 1, world);
             }
             return colour::Colour::new(0.0, 0.0, 0.0);
         }
