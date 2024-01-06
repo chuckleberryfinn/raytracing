@@ -25,7 +25,7 @@ impl Vec3 {
         self.e[2]
     }
 
-    fn length(&self) -> f64 {
+    pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
 
@@ -37,7 +37,7 @@ impl Vec3 {
         self.x() * rhs.x() + self.y() * rhs.y() + self.z() * rhs.z()
     }
 
-    fn cross(&self, rhs: Vec3) -> Vec3 {
+    pub fn cross(&self, rhs: Vec3) -> Vec3 {
         Vec3::new(
             self.y() * rhs.z() - self.z() * rhs.y(),
             self.z() * rhs.x() - self.x() * rhs.z(),
