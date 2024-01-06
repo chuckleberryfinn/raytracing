@@ -49,6 +49,19 @@ impl Vec3 {
         *self / self.length()
     }
 
+    pub fn random_in_unit_disk() -> Vec3 {
+        loop {
+            let p = Vec3::new(
+                random_float_range(-1.0, 1.0),
+                random_float_range(-1.0, 1.0),
+                0.0,
+            );
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
     pub fn random() -> Vec3 {
         Vec3::new(random_float(), random_float(), random_float())
     }
