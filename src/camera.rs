@@ -20,6 +20,7 @@ pub struct Camera {
     pixel00_loc: Point3,
     pixel_delta_u: Vec3,
     pixel_delta_v: Vec3,
+    vfov: f64,
 }
 
 impl Camera {
@@ -28,12 +29,14 @@ impl Camera {
         image_width: i64,
         samples_per_pixel: i32,
         max_depth: i32,
+        vfov: f64,
     ) -> Self {
         Self {
             aspect_ratio,
             image_width,
             samples_per_pixel,
             max_depth,
+            vfov,
             image_height: Default::default(),
             center: Default::default(),
             pixel00_loc: Default::default(),
@@ -106,7 +109,9 @@ impl Camera {
         self.center = Point3::new(0.0, 0.0, 0.0);
 
         let focal_length = 1.0;
-        let viewport_height = 2.0;
+        let theta = rtweekend::degrees_to_radians(self.vfov);
+        let h = (theta / 2.0).tan();
+        let viewport_height = 2.0 * h * focal_length;
         let viewport_width = viewport_height * (self.image_width as f64 / self.image_height as f64);
 
         let viewport_u = Vec3::new(viewport_width, 0.0, 0.0);
