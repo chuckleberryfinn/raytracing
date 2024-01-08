@@ -133,7 +133,6 @@ impl Camera {
 
         self.center = self.look_from;
 
-        let focal_length = (self.look_from - self.look_at).length();
         let theta = rtweekend::degrees_to_radians(self.vfov);
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h * self.focus_dist;
