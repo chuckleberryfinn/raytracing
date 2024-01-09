@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 mod camera;
 mod colour;
@@ -12,7 +12,7 @@ mod sphere;
 mod vec3;
 
 fn main() {
-    let ground_material = Rc::new(material::Lambertian {
+    let ground_material = Arc::new(material::Lambertian {
         albedo: colour::Colour::new(0.5, 0.5, 0.5),
     });
 
@@ -34,29 +34,29 @@ fn main() {
             if (center - vec3::Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
                 if choose_mat < 0.8 {
                     let albedo = colour::Colour::random() * colour::Colour::random();
-                    let sphere_material = Rc::new(material::Lambertian { albedo });
+                    let sphere_material = Arc::new(material::Lambertian { albedo });
                     world.add(sphere::Sphere::new(center, 0.2, sphere_material));
                 } else if choose_mat < 0.95 {
                     let albedo = colour::Colour::random_range(0.5, 1.0);
                     let fuzz = rtweekend::random_float_range(0.0, 0.5);
-                    let sphere_material = Rc::new(material::Metal { albedo, fuzz });
+                    let sphere_material = Arc::new(material::Metal { albedo, fuzz });
                     world.add(sphere::Sphere::new(center, 0.2, sphere_material));
                 } else {
-                    let sphere_material = Rc::new(material::Dielectric { ir: 1.5 });
+                    let sphere_material = Arc::new(material::Dielectric { ir: 1.5 });
                     world.add(sphere::Sphere::new(center, 0.2, sphere_material));
                 }
             }
         }
     }
 
-    let material1 = Rc::new(material::Dielectric { ir: 1.5 });
+    let material1 = Arc::new(material::Dielectric { ir: 1.5 });
     world.add(sphere::Sphere::new(
         vec3::Point3::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     ));
 
-    let material2 = Rc::new(material::Lambertian {
+    let material2 = Arc::new(material::Lambertian {
         albedo: colour::Colour::new(0.4, 0.2, 0.1),
     });
     world.add(sphere::Sphere::new(
@@ -65,7 +65,7 @@ fn main() {
         material2,
     ));
 
-    let material3 = Rc::new(material::Metal {
+    let material3 = Arc::new(material::Metal {
         albedo: colour::Colour::new(0.7, 0.6, 0.5),
         fuzz: 0.0,
     });

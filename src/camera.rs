@@ -1,5 +1,6 @@
+use rayon::prelude::*;
 use std::io::{stderr, Write};
-use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::colour;
 use crate::hittable;
@@ -70,7 +71,7 @@ impl Camera {
         }
     }
 
-    pub fn render(&mut self, world: &impl hittable::Hittable) {
+    pub fn render(&mut self, world: &(impl hittable::Hittable + std::marker::Sync)) {
         self.initialize();
 
         println!("P3\n{} {}\n255", self.image_width, self.image_height);
@@ -79,11 +80,18 @@ impl Camera {
             eprint!("\rScanlines remaining: {progress} ");
             stderr().flush().expect("Unable to flush stderr");
             for i in 0..self.image_width {
-                let mut pixel_colour = colour::Colour::new(0.0, 0.0, 0.0);
-                for _ in 0..self.samples_per_pixel {
-                    let r = self.get_ray(i, j);
-                    pixel_colour += Camera::ray_colour(&r, self.max_depth, world);
-                }
+                let pixel_colour = (0..self.samples_per_pixel)
+                    .into_par_iter()
+                    .fold(
+                        || colour::Colour::new(0.0, 0.0, 0.0),
+                        |acc, item| {
+                            acc + Camera::ray_colour(&self.get_ray(i, j), self.max_depth, world)
+                        },
+                    )
+                    .reduce(
+                        || colour::Colour::new(0.0, 0.0, 0.0),
+                        |acc, item| acc + item,
+                    );
                 colour::write_colour(&pixel_colour, self.samples_per_pixel);
             }
         }
@@ -97,7 +105,7 @@ impl Camera {
         }
 
         let mut rec = hittable::HitRecord {
-            mat: Rc::new(material::Lambertian {
+            mat: Arc::new(material::Lambertian {
                 albedo: colour::Colour::default(),
             }),
             p: Point3::default(),

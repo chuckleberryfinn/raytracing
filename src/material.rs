@@ -4,7 +4,7 @@ use crate::ray::Ray;
 use crate::rtweekend;
 use crate::vec3::Vec3;
 
-pub trait Material {
+pub trait Material: Sync + Send {
     fn scatter(
         &self,
         r_in: &Ray,

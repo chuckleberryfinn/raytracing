@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::colour::Colour;
 use crate::hittable::{HitRecord, Hittable};
@@ -34,7 +34,7 @@ impl<T: Hittable> Hittable for HittableList<T> {
 
         for object in &self.objects {
             let mut temp_rec = HitRecord {
-                mat: Rc::new(Lambertian {
+                mat: Arc::new(Lambertian {
                     albedo: Colour::default(),
                 }),
                 p: Point3::default(),
