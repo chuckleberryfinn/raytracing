@@ -78,7 +78,7 @@ fn main() {
     let mut cam = camera::Camera::new(
         16.0 / 9.0,
         1200,
-        500,
+        50,
         50,
         20.0,
         vec3::Point3::new(13.0, 2.0, 3.0),

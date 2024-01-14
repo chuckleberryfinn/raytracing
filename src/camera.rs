@@ -35,6 +35,7 @@ pub struct Camera {
 }
 
 impl Camera {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         aspect_ratio: f64,
         image_width: i64,
@@ -75,16 +76,16 @@ impl Camera {
         self.initialize();
 
         println!("P3\n{} {}\n255", self.image_width, self.image_height);
-        for j in 0..self.image_height {
+        (0..self.image_height).for_each(|j| {
             let progress = self.image_height - j;
             eprint!("\rScanlines remaining: {progress} ");
             stderr().flush().expect("Unable to flush stderr");
-            for i in 0..self.image_width {
+            (0..self.image_width).for_each(|i| {
                 let pixel_colour = (0..self.samples_per_pixel)
                     .into_par_iter()
                     .fold(
                         || colour::Colour::new(0.0, 0.0, 0.0),
-                        |acc, item| {
+                        |acc, _| {
                             acc + Camera::ray_colour(&self.get_ray(i, j), self.max_depth, world)
                         },
                     )
@@ -93,8 +94,8 @@ impl Camera {
                         |acc, item| acc + item,
                     );
                 colour::write_colour(&pixel_colour, self.samples_per_pixel);
-            }
-        }
+            })
+        });
         eprintln!("\rDone.                 ");
         stderr().flush().expect("Unable to flush stderr");
     }
